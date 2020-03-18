@@ -12,8 +12,6 @@ import InterviewerListItem from "./InterviewerListItem";
 
 export default function InterviewerList(props) {
   const { interviewers, interviewer, setInterviewer } = props;
-  // const { id, name, avatar, selected, setInterviewer } = props;
-  // const [interviewer, setInterviewer] = useState("Sylvia Palmer");
   return (
     <section className="interviewers">
       <h4 className="interviewers__header text--light">Interviewer</h4>
