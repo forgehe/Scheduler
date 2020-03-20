@@ -11,6 +11,7 @@ import Form from "./Form";
 
 export default function Appointment(props) {
   const { interview, id, time } = props;
+
   return (
     <>
       <Header time={time}></Header>
