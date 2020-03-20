@@ -9,7 +9,7 @@ import Empty from "./Empty";
 import Error from "./Error";
 import Form from "./Form";
 
-export default function Application(props) {
+export default function Appointment(props) {
   const { interview, id, time } = props;
   return (
     <>
