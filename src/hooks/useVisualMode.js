@@ -1,12 +1,20 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 
 export default function useVisualMode(initial) {
   const [mode, setMode] = useState(initial);
   const [history, setHistory] = useState([initial]);
 
-  const transition = changing => {
-    setMode(changing);
-    setHistory([...history, changing]);
+  const transition = (changing, replace = false) => {
+    if (replace) {
+      const newHistory = history.slice(0, -1);
+      newHistory.push(changing);
+      setMode(changing);
+      setHistory(newHistory);
+      console.log("replace:", newHistory, changing);
+    } else {
+      setMode(changing);
+      setHistory([...history, changing]);
+    }
   };
   const back = () => {
     if (history.length > 1) {
