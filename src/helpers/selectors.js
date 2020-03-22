@@ -1,4 +1,6 @@
 export function getAppointmentsForDay(state, day) {
+  // console.log("getAppointmentsForDay state:", state);
+
   const output = [];
   const dayID = state.days.find(value => value.name === day);
   const appointmentIDs = dayID ? dayID.appointments : [];
@@ -28,8 +30,9 @@ const setInterview = (state, appointment) => {
 export function getInterview(state, interview) {
   if (interview) {
     const id = interview.interviewer;
-    interview.interviewer = { ...state.interviewers[id] };
-    return interview;
+    const newInterview = { ...interview };
+    newInterview.interviewer = { ...state.interviewers[id] };
+    return newInterview;
   } else {
     return null;
   }

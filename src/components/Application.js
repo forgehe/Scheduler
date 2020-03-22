@@ -7,49 +7,6 @@ import "components/Application.scss";
 
 import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
 
-// const appointments = [
-//   {
-//     id: 1,
-//     time: "12pm"
-//   },
-//   {
-//     id: 2,
-//     time: "1pm",
-//     interview: {
-//       student: "Lydia Miller-Jones",
-//       interviewer: {
-//         id: 1,
-//         name: "Sylvia Palmer",
-//         avatar: "https://i.imgur.com/LpaY82x.png"
-//       }
-//     }
-//   },
-//   {
-//     id: 3,
-//     time: "2pm",
-//     interview: {
-//       student: "Richard Dank",
-//       interviewer: {
-//         id: 3,
-//         name: "Whada Funk",
-//         avatar: "https://i.redd.it/x8hhr1z8han41.jpg"
-//       }
-//     }
-//   },
-//   {
-//     id: 4,
-//     time: "8pm",
-//     interview: {
-//       student: "Danklord Supreme",
-//       interviewer: {
-//         id: 3,
-//         name: "Da Undankest",
-//         avatar: "https://i.redd.it/t8wx28oto8n41.jpg"
-//       }
-//     }
-//   }
-// ];
-
 export default function Application(props) {
   // const [days, setDays] = useState([]);
   // const [day, setDay] = useState("Monday");
@@ -67,6 +24,7 @@ export default function Application(props) {
 
   const schedule = appointments.map(appointment => {
     const interview = getInterview(state, appointment.interview);
+    console.log(interview);
 
     return (
       <Appointment
@@ -89,7 +47,7 @@ export default function Application(props) {
       Promise.resolve(apiInterviewers)
     ]).then(all => {
       setState(prev => ({
-        ...state,
+        ...prev,
         days: all[0].data,
         appointments: all[1].data,
         interviewers: all[2].data
