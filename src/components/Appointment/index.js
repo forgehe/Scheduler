@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 
 import "./styles.scss";
 import Header from "./Header";
@@ -13,12 +13,29 @@ import useVisualMode from "../../hooks/useVisualMode";
 import axios from "axios";
 
 export default function Appointment(props) {
-  const { interview, id, time, interviewers, bookInterview } = props;
+  const {
+    interview,
+    id,
+    time,
+    interviewers,
+    bookInterview,
+    cancelInterview
+  } = props;
+
   const EMPTY = "EMPTY";
   const SHOW = "SHOW";
   const CREATE = "CREATE";
   const SAVE = "SAVE";
   const DELETE = "DELETE";
+  const CONFIRM = "CONFIRM";
+  const STATUS = "STATUS";
+
+  const [confirmArgs, setConfirmArgs] = useState({
+    message: "default confirmation",
+    callback: null
+  });
+
+  const [statusArgs, setStatusArgs] = useState("default status");
 
   const { mode, transition, back } = useVisualMode(
     props.interview ? SHOW : EMPTY
@@ -30,19 +47,48 @@ export default function Appointment(props) {
       student: name,
       interviewer
     };
-    transition(SAVE);
+    status("Saving");
     axios
       .put(`/api/appointments/${id}`, { interview })
       .then(() => bookInterview(id, interview))
       .then(() => transition(SHOW));
   }
+  function deleteAppointment(id) {
+    status("Deleting");
+    axios
+      .delete(`/api/appointments/${id}`)
+      .then(() => cancelInterview(id))
+      .then(() => transition(EMPTY));
+  }
 
+  function confirm(callback, message) {
+    transition(CONFIRM);
+
+    setConfirmArgs({
+      callback,
+      message
+    });
+  }
+  console.log("confirmArgs", confirmArgs);
+
+  function status(message) {
+    transition(STATUS);
+    setStatusArgs(message);
+  }
   return (
     <>
       <Header time={time}></Header>
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
-      {mode === SAVE && <Status message={"Saving"} />}
-      {mode === DELETE && <Status message={"Deleting"} />}
+      {/* {mode === SAVE && <Status message={"Saving"} />}
+      {mode === DELETE && <Status message={"Deleting"} />} */}
+      {mode === STATUS && <Status message={statusArgs} />}
+      {mode === CONFIRM && (
+        <Confirm
+          onCancel={() => back()}
+          onConfirm={confirmArgs.callback}
+          message={confirmArgs.message}
+        />
+      )}
       {mode === CREATE && (
         <Form
           interviewers={interviewers}
@@ -54,6 +100,9 @@ export default function Appointment(props) {
         <Show
           student={props.interview.student}
           interviewer={props.interview.interviewer}
+          onDelete={() =>
+            confirm(() => deleteAppointment(id), "Delete This Appointment?")
+          }
         />
       )}
     </>

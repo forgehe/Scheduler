@@ -43,9 +43,17 @@ export default function Application(props) {
     setState(prev => ({ ...prev, appointments }));
   }
 
+  function cancelInterview(id) {
+    console.log("cancelInterview", id);
+    const appointments = {
+      ...state.appointments,
+      [id]: null
+    };
+  }
+
   const schedule = appointments.map(appointment => {
     const interview = getInterview(state, appointment.interview);
-    console.log("interview", interview);
+    // console.log("interview", interview);
 
     return (
       <Appointment
@@ -55,6 +63,7 @@ export default function Application(props) {
         interview={interview}
         interviewers={interviewers}
         bookInterview={bookInterview}
+        cancelInterview={cancelInterview}
       />
     );
   });
