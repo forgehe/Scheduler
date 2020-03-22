@@ -29,6 +29,7 @@ export default function Appointment(props) {
   const DELETE = "DELETE";
   const CONFIRM = "CONFIRM";
   const STATUS = "STATUS";
+  const EDIT = "EDIT";
 
   const [confirmArgs, setConfirmArgs] = useState({
     message: "default confirmation",
@@ -78,7 +79,7 @@ export default function Appointment(props) {
   return (
     <>
       <Header time={time}></Header>
-      {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
+      {mode === EMPTY && <Empty onAdd={() => transition(EDIT)} />}
       {/* {mode === SAVE && <Status message={"Saving"} />}
       {mode === DELETE && <Status message={"Deleting"} />} */}
       {mode === STATUS && <Status message={statusArgs} />}
@@ -89,8 +90,17 @@ export default function Appointment(props) {
           message={confirmArgs.message}
         />
       )}
-      {mode === CREATE && (
+      {/* {mode === CREATE && (
         <Form
+          interviewers={interviewers}
+          onSave={save}
+          onCancel={() => back()}
+        />
+      )} */}
+      {mode === EDIT && (
+        <Form
+          name={props.interview ? props.interview.student : null}
+          interviewer={props.interview ? props.interview.interviewer.id : null}
           interviewers={interviewers}
           onSave={save}
           onCancel={() => back()}
@@ -103,6 +113,7 @@ export default function Appointment(props) {
           onDelete={() =>
             confirm(() => deleteAppointment(id), "Delete This Appointment?")
           }
+          onEdit={() => transition(EDIT)}
         />
       )}
     </>
