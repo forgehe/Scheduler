@@ -33,8 +33,7 @@ export default function Form(props) {
         </form>
         <InterviewerList
           interviewers={interviewers}
-          interviewer={interviewer ? interviewer : ""}
-          value={interviewer}
+          value={interviewer ? interviewer : null}
           onChange={setInterviewer}
         />
       </section>
