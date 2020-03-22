@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect } from "react";
 
 import "./styles.scss";
 import Header from "./Header";
@@ -9,19 +9,37 @@ import Empty from "./Empty";
 import Error from "./Error";
 import Form from "./Form";
 
+import useVisualMode from "../../hooks/useVisualMode";
+
 export default function Appointment(props) {
-  const { interview, id, time } = props;
+  const { interview, id, time, interviewers } = props;
+  const EMPTY = "EMPTY";
+  const SHOW = "SHOW";
+  const CREATE = "CREATE";
+
+  const { mode, transition, back } = useVisualMode(
+    props.interview ? SHOW : EMPTY
+  );
+  // console.log("mode", mode);
+  // console.log("transition", transition);
+  // console.log("back", back);
 
   return (
     <>
       <Header time={time}></Header>
-      {interview ? (
+      {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
+      {mode === CREATE && (
+        <Form
+          interviewers={interviewers}
+          onSave={() => console.log("save")}
+          onCancel={() => back()}
+        />
+      )}
+      {mode === SHOW && (
         <Show
-          student={interview.student}
-          interviewer={interview.interviewer}
-        ></Show>
-      ) : (
-        <Empty onAdd={() => console.log("neat")}></Empty>
+          student={props.interview.student}
+          interviewer={props.interview.interviewer}
+        />
       )}
     </>
   );

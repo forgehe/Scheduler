@@ -5,50 +5,11 @@ import DayList from "./DayList";
 import Appointment from "components/Appointment";
 import "components/Application.scss";
 
-import { getAppointmentsForDay, getInterview } from "../helpers/selectors";
-
-// const appointments = [
-//   {
-//     id: 1,
-//     time: "12pm"
-//   },
-//   {
-//     id: 2,
-//     time: "1pm",
-//     interview: {
-//       student: "Lydia Miller-Jones",
-//       interviewer: {
-//         id: 1,
-//         name: "Sylvia Palmer",
-//         avatar: "https://i.imgur.com/LpaY82x.png"
-//       }
-//     }
-//   },
-//   {
-//     id: 3,
-//     time: "2pm",
-//     interview: {
-//       student: "Richard Dank",
-//       interviewer: {
-//         id: 3,
-//         name: "Whada Funk",
-//         avatar: "https://i.redd.it/x8hhr1z8han41.jpg"
-//       }
-//     }
-//   },
-//   {
-//     id: 4,
-//     time: "8pm",
-//     interview: {
-//       student: "Danklord Supreme",
-//       interviewer: {
-//         id: 3,
-//         name: "Da Undankest",
-//         avatar: "https://i.redd.it/t8wx28oto8n41.jpg"
-//       }
-//     }
-//   }
-// ];
+import {
+  getAppointmentsForDay,
+  getInterview,
+  getInterviewersForDay
+} from "../helpers/selectors";
 
 export default function Application(props) {
   // const [days, setDays] = useState([]);
@@ -62,11 +23,16 @@ export default function Application(props) {
     appointments: {},
     interviewers: {}
   });
+  console.log("state", state);
 
   const appointments = getAppointmentsForDay(state, state.day);
 
+  const interviewers = getInterviewersForDay(state, state.day);
+  console.log("interviewers", interviewers);
+
   const schedule = appointments.map(appointment => {
     const interview = getInterview(state, appointment.interview);
+    console.log("interview", interview);
 
     return (
       <Appointment
@@ -74,6 +40,7 @@ export default function Application(props) {
         id={appointment.id}
         time={appointment.time}
         interview={interview}
+        interviewers={interviewers}
       />
     );
   });
@@ -89,7 +56,7 @@ export default function Application(props) {
       Promise.resolve(apiInterviewers)
     ]).then(all => {
       setState(prev => ({
-        ...state,
+        ...prev,
         days: all[0].data,
         appointments: all[1].data,
         interviewers: all[2].data
