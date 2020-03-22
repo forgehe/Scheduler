@@ -37,3 +37,22 @@ export function getInterview(state, interview) {
     return null;
   }
 }
+
+export function getInterviewersForDay(state, day) {
+  // console.log("getAppointmentsForDay state:", state);
+
+  const output = [];
+  const matchedDay = state.days.find(value => value.name === day);
+  // console.log("matchedDay", matchedDay);
+
+  const interviewArr = matchedDay ? matchedDay.interviewers : [];
+  for (const id of interviewArr) {
+    let interview = state.interviewers[id];
+    if (interview) {
+      output.push(interview);
+    }
+  }
+  // console.log("output ", output);
+
+  return output;
+}
