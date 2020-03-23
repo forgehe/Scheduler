@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useState } from "react";
 
 import "./styles.scss";
 import Header from "./Header";
@@ -10,7 +10,6 @@ import Error from "./Error";
 import Form from "./Form";
 
 import useVisualMode from "../../hooks/useVisualMode";
-import axios from "axios";
 
 export default function Appointment(props) {
   const {
@@ -28,61 +27,65 @@ export default function Appointment(props) {
   const SAVE = "SAVE";
   const DELETE = "DELETE";
   const CONFIRM = "CONFIRM";
-  const STATUS = "STATUS";
+  // const STATUS = "STATUS";
   const EDIT = "EDIT";
+  const ERROR_SAVE = "ERROR_SAVE";
+  const ERROR_DELETE = "ERROR_DELETE";
 
   const [confirmArgs, setConfirmArgs] = useState({
     message: "default confirmation",
     callback: null
   });
 
-  const [statusArgs, setStatusArgs] = useState("default status");
+  // const [statusArgs, setStatusArgs] = useState("default status");
 
-  const { mode, transition, back } = useVisualMode(
-    props.interview ? SHOW : EMPTY
-  );
+  const { mode, transition, back } = useVisualMode(interview ? SHOW : EMPTY);
   function save(name, interviewer) {
-    console.log("save", interviewer);
-
     const interview = {
       student: name,
       interviewer
     };
-    status("Saving");
-    axios
-      .put(`/api/appointments/${id}`, { interview })
-      .then(() => bookInterview(id, interview))
-      .then(() => transition(SHOW));
+    // status("Saving");
+    transition(SAVE);
+    bookInterview(id, interview)
+      .then(() => transition(SHOW))
+      .catch(() => transition(ERROR, true));
   }
   function deleteAppointment(id) {
-    status("Deleting");
-    axios
-      .delete(`/api/appointments/${id}`)
-      .then(() => cancelInterview(id))
-      .then(() => transition(EMPTY));
+    // status("Deleting");
+    transition(DELETE, true);
+
+    cancelInterview(id)
+      .then(() => transition(EMPTY))
+      .catch(error => transition(ERROR_DELETE, true));
   }
 
   function confirm(callback, message) {
     transition(CONFIRM);
-
     setConfirmArgs({
       callback,
       message
     });
   }
-  console.log("confirmArgs", confirmArgs);
+  // console.log("confirmArgs", confirmArgs);
 
-  function status(message) {
-    transition(STATUS);
-    setStatusArgs(message);
-  }
+  // function status(message) {
+  //   transition(STATUS);
+  //   setStatusArgs(message);
+  // }
   return (
     <>
       <Header time={time}></Header>
-      {mode === EMPTY && <Empty onAdd={() => transition(EDIT)} />}
-      {/* {mode === SAVE && <Status message={"Saving"} />}
-      {mode === DELETE && <Status message={"Deleting"} />} */}
-      {mode === STATUS && <Status message={statusArgs} />}
+      {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
+      {mode === SAVE && <Status message={"Saving"} />}
+      {mode === DELETE && <Status message={"Deleting"} />}
+      {/* {mode === STATUS && <Status message={statusArgs} />} */}
+      {mode === ERROR_SAVE && (
+        <Error message={"Error Saving Stuff"} onClose={() => back()} />
+      )}
+      {mode === ERROR_DELETE && (
+        <Error message={"Error Deleting Stuff"} onClose={() => back()} />
+      )}
       {mode === CONFIRM && (
         <Confirm
           onCancel={() => back()}
@@ -90,13 +93,13 @@ export default function Appointment(props) {
           message={confirmArgs.message}
         />
       )}
-      {/* {mode === CREATE && (
+      {mode === CREATE && (
         <Form
           interviewers={interviewers}
           onSave={save}
           onCancel={() => back()}
         />
-      )} */}
+      )}
       {mode === EDIT && (
         <Form
           name={props.interview ? props.interview.student : null}

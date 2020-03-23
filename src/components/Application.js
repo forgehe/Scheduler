@@ -4,6 +4,7 @@ import axios from "axios";
 import DayList from "./DayList";
 import Appointment from "components/Appointment";
 import "components/Application.scss";
+import useApplicationData from "../hooks/useApplicationData";
 
 import {
   getAppointmentsForDay,
@@ -14,46 +15,21 @@ import {
 export default function Application(props) {
   // const [days, setDays] = useState([]);
   // const [day, setDay] = useState("Monday");
-  const setDay = day => setState({ ...state, day });
   // const setDays = days => setState({ ...state, days });
 
-  const [state, setState] = useState({
-    day: "Monday",
-    days: [],
-    appointments: {},
-    interviewers: {}
-  });
-  console.log("state", state);
+  const {
+    state,
+    setDay,
+    bookInterview,
+    cancelInterview
+  } = useApplicationData();
 
   const appointments = getAppointmentsForDay(state, state.day);
 
   const interviewers = getInterviewersForDay(state, state.day);
-  // console.log("interviewers", interviewers);
-
-  function bookInterview(id, interview) {
-    console.log("bookInterview", id, interview);
-    const appointment = {
-      ...state.appointments[id],
-      interview: { ...interview }
-    };
-    const appointments = {
-      ...state.appointments,
-      [id]: appointment
-    };
-    setState(prev => ({ ...prev, appointments }));
-  }
-
-  function cancelInterview(id) {
-    console.log("cancelInterview", id);
-    const appointments = {
-      ...state.appointments,
-      [id]: null
-    };
-  }
 
   const schedule = appointments.map(appointment => {
     const interview = getInterview(state, appointment.interview);
-    // console.log("interview", interview);
 
     return (
       <Appointment
@@ -67,25 +43,6 @@ export default function Application(props) {
       />
     );
   });
-
-  useEffect(() => {
-    const apiDays = axios.get("/api/days");
-    const apiAppointments = axios.get("/api/appointments");
-    const apiInterviewers = axios.get("/api/interviewers");
-
-    Promise.all([
-      Promise.resolve(apiDays),
-      Promise.resolve(apiAppointments),
-      Promise.resolve(apiInterviewers)
-    ]).then(all => {
-      setState(prev => ({
-        ...prev,
-        days: all[0].data,
-        appointments: all[1].data,
-        interviewers: all[2].data
-      }));
-    });
-  }, []);
 
   return (
     <main className="layout">
