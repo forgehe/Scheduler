@@ -49,7 +49,7 @@ export default function Appointment(props) {
     transition(SAVE);
     bookInterview(id, interview)
       .then(() => transition(SHOW))
-      .catch(() => transition(ERROR, true));
+      .catch(() => transition(ERROR_SAVE, true));
   }
   function deleteAppointment(id) {
     // status("Deleting");
