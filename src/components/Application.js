@@ -13,13 +13,9 @@ import {
 } from "../helpers/selectors";
 
 export default function Application(props) {
-  // const [days, setDays] = useState([]);
-  // const [day, setDay] = useState("Monday");
-  // const setDays = days => setState({ ...state, days });
-
   const {
     state,
-    setDay,
+    setState,
     bookInterview,
     cancelInterview
   } = useApplicationData();
@@ -58,7 +54,7 @@ export default function Application(props) {
           <DayList
             days={state.days}
             day={state.day}
-            setDay={day => setDay(day)}
+            setDay={day => setState(prev => ({ ...prev, day }))}
           />
         </nav>
         <img
