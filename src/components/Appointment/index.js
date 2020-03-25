@@ -12,6 +12,8 @@ import Form from "./Form";
 import useVisualMode from "../../hooks/useVisualMode";
 
 export default function Appointment(props) {
+  // console.log("props:", props);
+
   const {
     interview,
     id,
@@ -111,8 +113,8 @@ export default function Appointment(props) {
       )}
       {mode === SHOW && (
         <Show
-          student={props.interview.student}
-          interviewer={props.interview.interviewer}
+          student={props.interview ? props.interview.student : null}
+          interviewer={props.interview ? props.interview.interviewer : null}
           onDelete={() =>
             confirm(() => deleteAppointment(id), "Delete This Appointment?")
           }
