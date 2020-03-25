@@ -12,7 +12,6 @@ export default function useApplicationData() {
     appointments: {},
     interviewers: {}
   });
-  console.log("state", state);
 
   useEffect(() => {
     const apiDays = axios.get("/api/days");
