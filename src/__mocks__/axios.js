@@ -52,7 +52,7 @@ let fixtures = {
     }
   }
 };
-
+// Reset fixtures obj to default state for testing.
 export const resetFixture = () => {
   fixtures = {
     days: [
@@ -136,10 +136,9 @@ export default {
       });
     }
   }),
-
+  // fixtures have to update so I can retrieve the most recent data from the db
   put: jest.fn((url, data) => {
     if (url.match(/\/api\/appointments\/+\d/g)) {
-      console.log("jestfunction", url, data);
       const interviewerID = url.slice(18);
       fixtures.appointments[interviewerID].interview = data.interview;
       return Promise.resolve({
@@ -148,9 +147,9 @@ export default {
       });
     }
   }),
+  // fixtures have to update so I can retrieve the most recent data from the db
   delete: jest.fn(url => {
     if (url.match(/\/api\/appointments\/+\d/g)) {
-      console.log("jestfunction", url);
       const interviewerID = url.slice(18);
       fixtures.appointments[interviewerID].interview = null;
       return Promise.resolve({

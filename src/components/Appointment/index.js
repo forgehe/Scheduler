@@ -12,8 +12,6 @@ import Form from "./Form";
 import useVisualMode from "../../hooks/useVisualMode";
 
 export default function Appointment(props) {
-  // console.log("props:", props);
-
   const {
     interview,
     id,
@@ -23,44 +21,40 @@ export default function Appointment(props) {
     cancelInterview
   } = props;
 
+  // Modes to determine which view to show
   const EMPTY = "EMPTY";
   const SHOW = "SHOW";
   const CREATE = "CREATE";
   const SAVE = "SAVE";
   const DELETE = "DELETE";
   const CONFIRM = "CONFIRM";
-  // const STATUS = "STATUS";
   const EDIT = "EDIT";
   const ERROR_SAVE = "ERROR_SAVE";
   const ERROR_DELETE = "ERROR_DELETE";
+  const { mode, transition, back } = useVisualMode(interview ? SHOW : EMPTY);
 
+  // Args when calling the confirm view
   const [confirmArgs, setConfirmArgs] = useState({
     message: "default confirmation",
     callback: null
   });
 
-  // const [statusArgs, setStatusArgs] = useState("default status");
-
-  const { mode, transition, back } = useVisualMode(interview ? SHOW : EMPTY);
-  // console.log("appoint", mode, id, props);
   function save(name, interviewer) {
     const interview = {
       student: name,
       interviewer
     };
-    // status("Saving");
     transition(SAVE);
-    bookInterview(id, interview)
+    bookInterview(id, interview) //axios.put to update api, then setState new db
       .then(() => transition(SHOW))
       .catch(() => transition(ERROR_SAVE, true));
   }
   function deleteAppointment(id) {
-    // status("Deleting");
     transition(DELETE, true);
 
-    cancelInterview(id)
+    cancelInterview(id) //axios.delete to update api, then setState new db
       .then(() => transition(EMPTY))
-      .catch(error => transition(ERROR_DELETE, true));
+      .catch(() => transition(ERROR_DELETE, true));
   }
 
   function confirm(callback, message) {
@@ -70,25 +64,20 @@ export default function Appointment(props) {
       message
     });
   }
-  // console.log("confirmArgs", confirmArgs);
 
-  // function status(message) {
-  //   transition(STATUS);
-  //   setStatusArgs(message);
-  // }
   return (
     <article data-testid="appointment" className="appointment">
       <Header time={time} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
       {mode === SAVE && <Status message={"Saving"} />}
       {mode === DELETE && <Status message={"Deleting"} />}
-      {/* {mode === STATUS && <Status message={statusArgs} />} */}
       {mode === ERROR_SAVE && (
         <Error message={"Error Saving Stuff"} onClose={() => back()} />
       )}
       {mode === ERROR_DELETE && (
         <Error message={"Error Deleting Stuff"} onClose={() => back()} />
       )}
+      {/* calls the confirm function for both SAVE and DELETE modes. */}
       {mode === CONFIRM && (
         <Confirm
           onCancel={() => back()}
