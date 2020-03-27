@@ -17,8 +17,13 @@ export default function Application(props) {
     state,
     setState,
     bookInterview,
-    cancelInterview
+    cancelInterview,
+    getData
   } = useApplicationData();
+
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
   const appointments = getAppointmentsForDay(state, state.day);
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function useApplicationData() {
@@ -10,24 +10,17 @@ export default function useApplicationData() {
     appointments: {},
     interviewers: {}
   });
-
-  useEffect(() => {
-    getData();
-  }, []);
+  // console.log("state:", state);
 
   function getData() {
-    // console.log("useEffect");
+    // console.log("getData", state);
 
-    const apiDays = axios.get("/api/days");
-    const apiAppointments = axios.get("/api/appointments");
-    const apiInterviewers = axios.get("/api/interviewers");
-
-    Promise.all([
-      Promise.resolve(apiDays),
-      Promise.resolve(apiAppointments),
-      Promise.resolve(apiInterviewers)
+    return Promise.all([
+      Promise.resolve(axios.get("/api/days")),
+      Promise.resolve(axios.get("/api/appointments")),
+      Promise.resolve(axios.get("/api/interviewers"))
     ]).then(all => {
-      setState(prev => ({
+      return setState(prev => ({
         ...prev,
         days: all[0].data,
         appointments: all[1].data,
@@ -36,19 +29,29 @@ export default function useApplicationData() {
     });
   }
 
+  useEffect(() => {
+    getData();
+  }, []);
+
   function bookInterview(id, interview) {
-    return axios.put(`/api/appointments/${id}`, { interview }).then(() => {
-      getData(interview);
-      return new Promise((resolve, reject) => {
-        resolve(interview);
-        reject(interview);
-      });
-    });
+    // const appointment = {
+    //   ...state.appointments[id],
+    //   interview: { ...interview }
+    // };
+    // const appointments = {
+    //   ...state.appointments,
+    //   [id]: appointment
+    // };
+    return axios.put(`/api/appointments/${id}`, { interview }).then(getData);
   }
 
   function cancelInterview(id) {
+    // const appointments = {
+    //   ...state.appointments,
+    //   [id]: { ...state.appointments[id], interview: null }
+    // };
     return axios.delete(`/api/appointments/${id}`).then(getData);
   }
 
-  return { state, setState, bookInterview, cancelInterview };
+  return { state, setState, getData, bookInterview, cancelInterview };
 }

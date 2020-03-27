@@ -42,6 +42,8 @@ export default function Appointment(props) {
   // const [statusArgs, setStatusArgs] = useState("default status");
 
   const { mode, transition, back } = useVisualMode(interview ? SHOW : EMPTY);
+  // console.log("appoint", mode, id, props);
+
   function save(name, interviewer) {
     const interview = {
       student: name,
@@ -76,7 +78,7 @@ export default function Appointment(props) {
   //   setStatusArgs(message);
   // }
   return (
-    <>
+    <article data-testid="appointment" className="appointment">
       <Header time={time}></Header>
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
       {mode === SAVE && <Status message={"Saving"} />}
@@ -121,6 +123,6 @@ export default function Appointment(props) {
           onEdit={() => transition(EDIT)}
         />
       )}
-    </>
+    </article>
   );
 }
