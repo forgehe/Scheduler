@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 
 import "./styles.scss";
 import Header from "./Header";
@@ -43,7 +43,6 @@ export default function Appointment(props) {
 
   const { mode, transition, back } = useVisualMode(interview ? SHOW : EMPTY);
   // console.log("appoint", mode, id, props);
-
   function save(name, interviewer) {
     const interview = {
       student: name,
@@ -79,7 +78,7 @@ export default function Appointment(props) {
   // }
   return (
     <article data-testid="appointment" className="appointment">
-      <Header time={time}></Header>
+      <Header time={time} />
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
       {mode === SAVE && <Status message={"Saving"} />}
       {mode === DELETE && <Status message={"Deleting"} />}
