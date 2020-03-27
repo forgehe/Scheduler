@@ -2,19 +2,15 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 
 export default function useApplicationData() {
-  // const setDay = day => setState({ ...state, day });
-
   const [state, setState] = useState({
     day: "Monday",
     days: [],
     appointments: {},
     interviewers: {}
   });
-  // console.log("state:", state);
 
+  // reloads data from the database, and then setState
   function getData() {
-    // console.log("getData", state);
-
     return Promise.all([
       Promise.resolve(axios.get("/api/days")),
       Promise.resolve(axios.get("/api/appointments")),
@@ -34,22 +30,10 @@ export default function useApplicationData() {
   }, []);
 
   function bookInterview(id, interview) {
-    // const appointment = {
-    //   ...state.appointments[id],
-    //   interview: { ...interview }
-    // };
-    // const appointments = {
-    //   ...state.appointments,
-    //   [id]: appointment
-    // };
     return axios.put(`/api/appointments/${id}`, { interview }).then(getData);
   }
 
   function cancelInterview(id) {
-    // const appointments = {
-    //   ...state.appointments,
-    //   [id]: { ...state.appointments[id], interview: null }
-    // };
     return axios.delete(`/api/appointments/${id}`).then(getData);
   }
 
